@@ -14,3 +14,6 @@ dependencies = [
   "numpy >= 1.22.4",
   "ipyvolume >= 0.6.3",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["ModellingInPython"]
