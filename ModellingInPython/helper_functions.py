@@ -21,3 +21,4 @@ def visualise_vectors(vectors = [[0,0,0]]):
     fig = ipv.figure()
     scatter = ipv.scatter(x,y,z, marker = 'sphere')
     ipv.show()
+visualise_vectors()
