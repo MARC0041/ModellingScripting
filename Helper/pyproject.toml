@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ModellingInPython"
+authors = [
+    {name = "Marcus Chan", email = "marcuschanhr@gmail.com"},
+]
+description = "My package description"
+requires-python = ">=3.7"
