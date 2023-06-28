@@ -1,7 +1,7 @@
-from ModellingInPython import math
-from ModellingInPython import matplotlib.pyplot as plt
-from ModellingInPython import numpy as np
-from ModellingInPython import ipyvolume as ipv
+import math
+# from ModellingInPython import matplotlib.pyplot as plt
+import numpy as np
+import ipyvolume as ipv
 
 # /System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: No module named install
 # export PATH="/Users/marcusc/opt/anaconda3/envs/python311/bin:$PATH"
@@ -12,6 +12,7 @@ def create_circle_vectors(radius = 5, num_points = 10):
         theta = 2 * math.pi * float(i) / num_points
         x, y = radius * math.cos(theta), radius * math.sin(theta)
         vectors.append(x,y,0)
+        
 
 
 # import matplotlib.pyplot as plt
