@@ -2,7 +2,7 @@ import math
 # from ModellingInPython import matplotlib.pyplot as plt
 # from ModellingInPython import numpy as np
 import numpy as np
-# import ipyvolume as ipv
+import ipyvolume as ipv
 
 # /System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: No module named install
 # export PATH="/Users/marcusc/opt/anaconda3/envs/python311/bin:$PATH"
