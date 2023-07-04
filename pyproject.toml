@@ -10,11 +10,11 @@ authors = [
 version = "1.0.0"
 description = "My package description"
 requires-python = ">=3.9"
+dependencies = [
+  "numpy >= 1.22.4",
+]
 
-#dependencies = [
-#  "numpy >= 1.22.4",
 #  "ipyvolume >= 0.6.3",
-#]
 
 [tool.hatch.build.targets.wheel]
 packages = ["ModellingInPython", "lab"]
