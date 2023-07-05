@@ -208,7 +208,8 @@ def test_controlpoints():
     # Evaluate the curve
     # crv.evaluate()
     points = crv.evalpts
-    visualise_vectors(points)
+    return points
+    # visualise_vectors(points)
 
     # Se t the v i s u al i z a t i o n component
     # crv.vis= VisMPL.VisCurve3D()
