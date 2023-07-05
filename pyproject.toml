@@ -13,9 +13,7 @@ requires-python = ">=3.9"
 dependencies = [
   "numpy >= 1.22.4",
   "ipyvolume == 0.6.0",
-  "Cython==0.29.36",
   "geomdl==5.3.1", 
-  "ipython-genutils==0.2.0"
 ]
 
 
@@ -24,3 +22,6 @@ packages = ["ModellingInPython", "lab"]
 
 [tool.distutils.bdist_wheel]
 universal = true
+
+#  "Cython==0.29.36",
+#  "ipython-genutils==0.2.0"

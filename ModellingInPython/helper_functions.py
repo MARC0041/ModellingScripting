@@ -191,8 +191,8 @@ def test():
 # connected_points()
 
 # %% Nurbs python test
+from geomdl import BSpline, utilities
 def test_controlpoints():
-    from geomdl import BSpline, utilities
     # from geomdl.visualization import VisMPL
     # Create a curve instance
     crv = BSpline.Curve()
