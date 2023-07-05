@@ -166,30 +166,51 @@ def test():
     return 2.5
 
 # %% 
-v = create_circle_vectors(50, 50, 0)
-v1 = v.copy()
-for i in range(len(v)):
-    v1.append(rotate_vector(v[i], [0,1,0], 180))
-    v1.append(rotate_vector(v[i], [0,1,0], 165))
-    v1.append(rotate_vector(v[i], [0,1,0], 150))
-    v1.append(rotate_vector(v[i], [0,1,0], 135))
-    v1.append(rotate_vector(v[i], [0,1,0], 120))
-    v1.append(rotate_vector(v[i], [0,1,0], 105))
-    v1.append(rotate_vector(v[i], [0,1,0], 90))
-    v1.append(rotate_vector(v[i], [0,1,0], 75))
-    v1.append(rotate_vector(v[i], [0,1,0], 60))
-    v1.append(rotate_vector(v[i], [0,1,0], 45))
-    v1.append(rotate_vector(v[i], [0,1,0], 30))
-    v1.append(rotate_vector(v[i], [0,1,0], 15))
-    # v[i] = y_rotation(v[i], math.pi/4)
-visualise_vectors(v1)
+# v = create_circle_vectors(50, 50, 0)
+# v1 = v.copy()
+# for i in range(len(v)):
+#     v1.append(rotate_vector(v[i], [0,1,0], 180))
+#     v1.append(rotate_vector(v[i], [0,1,0], 165))
+#     v1.append(rotate_vector(v[i], [0,1,0], 150))
+#     v1.append(rotate_vector(v[i], [0,1,0], 135))
+#     v1.append(rotate_vector(v[i], [0,1,0], 120))
+#     v1.append(rotate_vector(v[i], [0,1,0], 105))
+#     v1.append(rotate_vector(v[i], [0,1,0], 90))
+#     v1.append(rotate_vector(v[i], [0,1,0], 75))
+#     v1.append(rotate_vector(v[i], [0,1,0], 60))
+#     v1.append(rotate_vector(v[i], [0,1,0], 45))
+#     v1.append(rotate_vector(v[i], [0,1,0], 30))
+#     v1.append(rotate_vector(v[i], [0,1,0], 15))
+#     # v[i] = y_rotation(v[i], math.pi/4)
+# visualise_vectors(v1)
 
 # test_surface2()
 
 # test_animation()
-# print(9)
-# %%
-connected_points()
 
-# %%
+# connected_points()
+
+# %% Nurbs python test
+from geomdl import BSpline, utilities
+# from geomdl.visualization import VisMPL
+# Create a curve instance
+crv = BSpline.Curve()
+# Se t curve degree
+crv.degree = 3
+# Set control points
+crv.ctrlpts = [[10,5,10], [10,20,-30], [40,10,25], [-10,5,0]]
+# Auto−generate the knot vec tor
+crv.knotvector = utilities.generate_knot_vector(crv.degree, len(crv.ctrlpts))
+
+# specify evalutation delta
+crv.sample_size = 40
+# Evaluate the curve
+# crv.evaluate()
+points = crv.evalpts
+visualise_vectors(points)
+
+# Se t the v i s u al i z a t i o n component
+# crv.vis= VisMPL.VisCurve3D()
+# # Pl o t the curve
+# crv.render()
 # %%
