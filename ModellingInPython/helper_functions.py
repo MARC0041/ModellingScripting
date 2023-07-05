@@ -4,8 +4,8 @@ import math
 # from ModellingInPython import numpy as np
 import numpy as np
 import ipyvolume as ipv
-import scipy
-from scipy.spatial.transform import Rotation as R
+# import scipy
+# from scipy.spatial.transform import Rotation as R
 # import matplotlib.pyplot as plt
 # from mpl_toolkits.mplot3d import Axes3D
 
@@ -144,6 +144,20 @@ def test_surface2():
     # ipv.plot_wireframe(X, Z, Y, color="red")
     ipv.show()
     
+def connected_points():
+    node1 = np.array([0.0,0.0,0.0])
+    node2 = np.array([1.0,1.0,1.0])
+    node3 = np.array([0.0,1.0,1.0])
+    node4 = np.array([1.0,0.0,1.0])
+    fig = ipv.figure()
+    scatter = ipv.scatter([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], marker='sphere', size=5)
+    line = ipv.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], color='blue')
+    line = ipv.plot([node1[0], node3[0]], [node1[1], node3[1]], [node1[2], node3[2]], color='blue')
+    line = ipv.plot([node1[0], node4[0]], [node1[1], node4[1]], [node1[2], node4[2]], color='blue')
+    ipv.show()
+
+
+    pass
 def sweep_surface():
     return
 
@@ -174,4 +188,8 @@ visualise_vectors(v1)
 
 # test_animation()
 # print(9)
+# %%
+connected_points()
+
+# %%
 # %%
