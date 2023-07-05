@@ -191,26 +191,27 @@ def test():
 # connected_points()
 
 # %% Nurbs python test
-from geomdl import BSpline, utilities
-# from geomdl.visualization import VisMPL
-# Create a curve instance
-crv = BSpline.Curve()
-# Se t curve degree
-crv.degree = 3
-# Set control points
-crv.ctrlpts = [[10,5,10], [10,20,-30], [40,10,25], [-10,5,0]]
-# Auto−generate the knot vec tor
-crv.knotvector = utilities.generate_knot_vector(crv.degree, len(crv.ctrlpts))
+def test_controlpoints():
+    from geomdl import BSpline, utilities
+    # from geomdl.visualization import VisMPL
+    # Create a curve instance
+    crv = BSpline.Curve()
+    # Se t curve degree
+    crv.degree = 3
+    # Set control points
+    crv.ctrlpts = [[10,5,10], [10,20,-30], [40,10,25], [-10,5,0]]
+    # Auto−generate the knot vec tor
+    crv.knotvector = utilities.generate_knot_vector(crv.degree, len(crv.ctrlpts))
 
-# specify evalutation delta
-crv.sample_size = 40
-# Evaluate the curve
-# crv.evaluate()
-points = crv.evalpts
-visualise_vectors(points)
+    # specify evalutation delta
+    crv.sample_size = 40
+    # Evaluate the curve
+    # crv.evaluate()
+    points = crv.evalpts
+    visualise_vectors(points)
 
-# Se t the v i s u al i z a t i o n component
-# crv.vis= VisMPL.VisCurve3D()
-# # Pl o t the curve
-# crv.render()
+    # Se t the v i s u al i z a t i o n component
+    # crv.vis= VisMPL.VisCurve3D()
+    # # Pl o t the curve
+    # crv.render()
 # %%
