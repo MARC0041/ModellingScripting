@@ -3,6 +3,7 @@ import math
 import numpy as np
 import ipyvolume as ipv
 from geomdl import BSpline, utilities
+from matplotlib import cm
 
 # /System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: No module named install
 # export PATH="/Users/marcusc/opt/anaconda3/envs/python311/bin:$PATH"
@@ -16,7 +17,7 @@ def get_circle_vectors(radius = 1, num_points = 50, z_height = 0):
         num_points: int
     """
     vectors = []
-    for i in range(num_points):
+    for i in range(num_points+1):
         theta = 2 * math.pi * float(i) / num_points
         x, y = radius * math.cos(theta), radius * math.sin(theta)
         z = float(z_height)
@@ -36,8 +37,8 @@ def visualise_vectors(vectors = [[0.0,0.0,0.0]], point_size = 1):
     z = [v[2] for v in vectors]
     scatter = ipv.scatter(x,y,z, marker = 'sphere',size=point_size)
     ipv.xlim(min(x), max(x))
-    ipv.ylim(min(y), max(y))
-    ipv.zlim(min(z), max(z))
+    ipv.ylim(min(z), max(z))
+    ipv.zlim(min(y), max(y))
     ipv.squarelim()
     ipv.show()
 def unit_vector(vector):
@@ -136,21 +137,6 @@ def get_spline_vectors_from_controlpts(controlpts, sample_count=10, degree = 3):
     # Evaluate the curve - evalpts calls crv.evaluate() by default 
     points = crv.evalpts
     return points
-
-    
-def connected_points():
-    node1 = np.array([0.0,0.0,0.0])
-    node2 = np.array([1.0,1.0,1.0])
-    node3 = np.array([0.0,1.0,1.0])
-    node4 = np.array([1.0,0.0,1.0])
-    fig = ipv.figure()
-    scatter = ipv.scatter([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], marker='sphere', size=5)
-    line = ipv.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], color='blue')
-    line = ipv.plot([node1[0], node3[0]], [node1[1], node3[1]], [node1[2], node3[2]], color='blue')
-    line = ipv.plot([node1[0], node4[0]], [node1[1], node4[1]], [node1[2], node4[2]], color='blue')
-    ipv.show()
-    return
-
 def sweep_surface(cross_section_vectors, spline_vectors):
     """
     Sweeps the cross_section_vectors along the direction of the spline_vectors
@@ -176,7 +162,43 @@ def sweep_surface(cross_section_vectors, spline_vectors):
         layers.append(translated_vectors)
 
     return np.array(layers)
+def visualise_surface(layers, color = False):
+    """
+    Takes in a list of layers, 
+    a layer is defined as a list of vectors in that particular layer
+    visualises the surface based on the layers given
+    """
+    X = np.array([[layers[layer][theta][0] for theta in range(len(layers[0]))] for layer in range(len(layers))])
+    Y = np.array([[layers[layer][theta][1] for theta in range(len(layers[0]))] for layer in range(len(layers))])
+    Z = np.array([[layers[layer][theta][2] for theta in range(len(layers[0]))] for layer in range(len(layers))])
+    ipv.figure()
+    if color:
+        colormap = cm.coolwarm
+        znorm = np.array(Z - Z.min())
+        color = colormap(np.array(znorm)/znorm.ptp())
+        ipv.plot_surface(X, Z, Y, color=color[..., :3])
+    else:
+        ipv.plot_surface(X, Z, Y)   
 
+
+    ipv.xlim(X.min(), X.max())
+    ipv.ylim(Z.min(), Z.max())
+    ipv.zlim(Y.min(), Y.max())
+    ipv.squarelim()
+    ipv.show()
+
+def connected_points():
+    node1 = np.array([0.0,0.0,0.0])
+    node2 = np.array([1.0,1.0,1.0])
+    node3 = np.array([0.0,1.0,1.0])
+    node4 = np.array([1.0,0.0,1.0])
+    fig = ipv.figure()
+    scatter = ipv.scatter([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], marker='sphere', size=5)
+    line = ipv.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], color='blue')
+    line = ipv.plot([node1[0], node3[0]], [node1[1], node3[1]], [node1[2], node3[2]], color='blue')
+    line = ipv.plot([node1[0], node4[0]], [node1[1], node4[1]], [node1[2], node4[2]], color='blue')
+    ipv.show()
+    return
 
 
 # %% Tests
@@ -217,7 +239,7 @@ def example2_surface():
     ipv.xyzlim(-2, 2)
     ipv.show()
 def example3_surface():
-    a = np.arange(-5, 5, 0.2)
+    a = np.arange(-5, 5, 1)
     U, V = np.meshgrid(a, a)
     X = U
     Y = V
@@ -276,8 +298,78 @@ def example8_sweep():
     vectors = sweep_surface(circle, spline)
     visualise_vectors(vectors.reshape(-1, vectors.shape[-1]))
     return
-# %%
-# example6_rotatecirclevectors()
-example8_sweep()
+def example9_sweepsurface():
 
+    circle = get_circle_vectors(5,20, 0)
+    spline = get_spline_vectors_from_controlpts([[0,0,0], [1,1,1]], 10)
+    vectors = sweep_surface(circle, spline)
+    # flat_vectors = vectors.reshape(-1, vectors.shape[-1])
+    # X = np.array([v[0] for v in vectors])
+    # Y = np.array([v[1] for v in vectors])
+    # Z = np.array([v[2] for v in vectors])
+    X = np.array([[vectors[layer][theta][0] for theta in range(len(vectors[0]))] for layer in range(len(vectors))])
+    Y = np.array([[vectors[layer][theta][1] for theta in range(len(vectors[0]))] for layer in range(len(vectors))])
+    Z = np.array([[vectors[layer][theta][2] for theta in range(len(vectors[0]))] for layer in range(len(vectors))])
+    # print(f"shape: {vectors.shape}")
+    from matplotlib import cm
+    colormap = cm.coolwarm
+    znorm = np.array(Z - Z.min())
+    color = colormap(np.array(znorm)/znorm.ptp())
+
+    ipv.figure()
+    ipv.plot_surface(X, Z, Y, color=color[..., :3])
+    ipv.show()
+    return
+def example10_pipe():
+    # Define the theta and z ranges
+    theta = np.linspace(0, 2*np.pi, 10)
+    z = np.linspace(-1, 1, 50)
+
+    # Create the meshgrid
+    Theta, Z = np.meshgrid(theta, z)
+
+    # Define the surface coordinates
+    X = np.cos(Theta)
+    Y = np.sin(Theta)
+
+    # Create the 3D surface plot
+    ipv.figure()
+    ipv.plot_surface(X, Y, Z, color="blue")
+    ipv.xlabel('X')
+    ipv.ylabel('Y')
+    ipv.zlabel('Z')
+    ipv.show()
+    return
+def example11_sweepsurface():
+    circle = get_circle_vectors(5,40, 0)
+    cps = [[10,-5,-10], [10,20,-15], [20,10,25], [-10,5,0]]
+    spline = get_spline_vectors_from_controlpts(cps, 40,4)
+    vectors = sweep_surface(circle, spline)
+    visualise_surface(vectors, True)
+    # X = np.array([[vectors[layer][theta][0] for theta in range(len(vectors[0]))] for layer in range(len(vectors))])
+    # Y = np.array([[vectors[layer][theta][1] for theta in range(len(vectors[0]))] for layer in range(len(vectors))])
+    # Z = np.array([[vectors[layer][theta][2] for theta in range(len(vectors[0]))] for layer in range(len(vectors))])
+    # ipv.figure()
+    # ipv.plot_surface(X, Z, Y)
+    # ipv.show()
+    return
+
+
+# %%
+# example3_surface()
+# example6_rotatecirclevectors()
+# example7_sweep()
+# example8_sweep()
+# example9_sweepsurface()
+# example10_pipe()
+example11_sweepsurface()
+
+# %%
+
+# Functions needed
+"""
+1. Create surface from vertices
+2. iteration loop optimisation - lattices? 
+3. image operations
+"""
 # %%
