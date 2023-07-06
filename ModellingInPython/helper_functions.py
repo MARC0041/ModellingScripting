@@ -1,13 +1,8 @@
 # %% 
 import math
-# from ModellingInPython import matplotlib.pyplot as plt
-# from ModellingInPython import numpy as np
 import numpy as np
 import ipyvolume as ipv
-# import scipy
-# from scipy.spatial.transform import Rotation as R
-# import matplotlib.pyplot as plt
-# from mpl_toolkits.mplot3d import Axes3D
+from geomdl import BSpline, utilities
 
 # /System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: No module named install
 # export PATH="/Users/marcusc/opt/anaconda3/envs/python311/bin:$PATH"
@@ -26,7 +21,6 @@ def create_circle_vectors(radius = 1, num_points = 50, z_height = 0):
         z = float(z_height)
         vectors.append((x,y,z))
     return vectors
-
 def visualise_vectors(vectors = [[0.0,0.0,0.0]], point_size = 1):
     """Visualises the vectors inputted in a notebook
     Takes in a list of vectors and a point_size for each vector
@@ -43,23 +37,19 @@ def visualise_vectors(vectors = [[0.0,0.0,0.0]], point_size = 1):
 def unit_vector(vector):
     """ Returns the unit vector of the vector."""
     return vector / np.linalg.norm(vector)
-
 def angle_between(v1, v2):
     """Finds angle between two vectors"""
     v1_u = unit_vector(v1)
     v2_u = unit_vector(v2)
     return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
-
 def x_rotation(vector,theta):
     """Rotates 3-D vector around x-axis"""
     R = np.array([[1,0,0],[0,np.cos(theta),-np.sin(theta)],[0, np.sin(theta), np.cos(theta)]])
     return np.dot(R,vector)
-
 def y_rotation(vector,theta):
     """Rotates 3-D vector around y-axis"""
     R = np.array([[np.cos(theta),0,np.sin(theta)],[0,1,0],[-np.sin(theta), 0, np.cos(theta)]])
     return np.dot(R,vector)
-
 def z_rotation(vector,theta):
     """Rotates 3-D vector around z-axis"""
     R = np.array([[np.cos(theta), -np.sin(theta),0],[np.sin(theta), np.cos(theta),0],[0,0,1]])
@@ -89,8 +79,102 @@ def rotate_vector(vector, axis, angle):
     # Apply the rotation to the vector
     rotated_vector = np.dot(rotation_matrix, vector)
     return rotated_vector
+def get_spline_vectors_from_controlpts(controlpts, sample_count=10):
+    """
+    Returns a list of points that follows the derived curve using bspline
+    Inputs: 
+        controlpts: list of control points in a list. e.g. [[1,2,3], [4,5,6], [7,8,9], [10,11,12]]
+        sample_count: length of the returned vector list
+    Outputs:
+        list of vectors that follows the derived bspline curve
+    """
+    crv = BSpline.Curve()
+    # Set curve degree
+    crv.degree = max(1, min(3, len(controlpts)-1)) # if len(cp) <=3, degree must be less than that. but always >=1
+    # Set control points
+    crv.ctrlpts = controlpts
+    # Auto−generate the knot vector
+    crv.knotvector = utilities.generate_knot_vector(crv.degree, len(crv.ctrlpts))
+    # specify evalutation delta
+    crv.sample_size = sample_count
+    # Evaluate the curve - evalpts calls crv.evaluate() by default 
+    points = crv.evalpts
+    return points
 
-def test_animation():
+    
+def connected_points():
+    node1 = np.array([0.0,0.0,0.0])
+    node2 = np.array([1.0,1.0,1.0])
+    node3 = np.array([0.0,1.0,1.0])
+    node4 = np.array([1.0,0.0,1.0])
+    fig = ipv.figure()
+    scatter = ipv.scatter([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], marker='sphere', size=5)
+    line = ipv.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], color='blue')
+    line = ipv.plot([node1[0], node3[0]], [node1[1], node3[1]], [node1[2], node3[2]], color='blue')
+    line = ipv.plot([node1[0], node4[0]], [node1[1], node4[1]], [node1[2], node4[2]], color='blue')
+    ipv.show()
+
+
+    pass
+def sweep_surface():
+    return
+
+
+
+# %% Tests
+def test():
+    print("hello world")
+    return 2.5
+def example1_circle():
+    v = create_circle_vectors(50, 50, 0)
+    v1 = v.copy()
+    for i in range(len(v)):
+        v1.append(rotate_vector(v[i], [0,1,0], 180))
+        v1.append(rotate_vector(v[i], [0,1,0], 165))
+        v1.append(rotate_vector(v[i], [0,1,0], 150))
+        v1.append(rotate_vector(v[i], [0,1,0], 135))
+        v1.append(rotate_vector(v[i], [0,1,0], 120))
+        v1.append(rotate_vector(v[i], [0,1,0], 105))
+        v1.append(rotate_vector(v[i], [0,1,0], 90))
+        v1.append(rotate_vector(v[i], [0,1,0], 75))
+        v1.append(rotate_vector(v[i], [0,1,0], 60))
+        v1.append(rotate_vector(v[i], [0,1,0], 45))
+        v1.append(rotate_vector(v[i], [0,1,0], 30))
+        v1.append(rotate_vector(v[i], [0,1,0], 15))
+        # v[i] = y_rotation(v[i], math.pi/4)
+    visualise_vectors(v1)
+def example2_surface():
+    s = 1/2**0.5
+    # 4 vertices for the tetrahedron
+    x = np.array([1.,  -1, 0,  0])
+    y = np.array([0,   0, 1., -1])
+    z = np.array([-s, -s, s,  s])
+    # and 4 surfaces (triangles), where the number refer to the vertex index
+    triangles = [(0, 1, 2), (0, 1, 3), (0, 2, 3), (1,3,2)]
+    ipv.figure()
+    # we draw the tetrahedron
+    mesh = ipv.plot_trisurf(x, y, z, triangles=triangles, color='orange')
+    # and also mark the vertices
+    ipv.scatter(x, y, z, marker='sphere', color='blue')
+    ipv.xyzlim(-2, 2)
+    ipv.show()
+def example3_surface():
+    a = np.arange(-5, 5, 0.2)
+    U, V = np.meshgrid(a, a)
+    X = U
+    Y = V
+    Z = X*Y**2
+
+    from matplotlib import cm
+    colormap = cm.coolwarm
+    znorm = Z - Z.min()
+    color = colormap(np.array(znorm)/znorm.ptp())
+
+    ipv.figure()
+    ipv.plot_surface(X, Z, Y, color=color[..., :3])
+    # ipv.plot_wireframe(X, Z, Y, color="red")
+    ipv.show()
+def example4_animation():
     # create 2d grids: x, y, and r
     u = np.linspace(-10, 10, 25)
     x, y = np.meshgrid(u, u)
@@ -111,108 +195,9 @@ def test_animation():
     ipv.ylim(-3,3)
     ipv.show()
     return
-
-def test_surface():
-    s = 1/2**0.5
-    # 4 vertices for the tetrahedron
-    x = np.array([1.,  -1, 0,  0])
-    y = np.array([0,   0, 1., -1])
-    z = np.array([-s, -s, s,  s])
-    # and 4 surfaces (triangles), where the number refer to the vertex index
-    triangles = [(0, 1, 2), (0, 1, 3), (0, 2, 3), (1,3,2)]
-    ipv.figure()
-    # we draw the tetrahedron
-    mesh = ipv.plot_trisurf(x, y, z, triangles=triangles, color='orange')
-    # and also mark the vertices
-    ipv.scatter(x, y, z, marker='sphere', color='blue')
-    ipv.xyzlim(-2, 2)
-    ipv.show()
-def test_surface2():
-    a = np.arange(-5, 5, 0.2)
-    U, V = np.meshgrid(a, a)
-    X = U
-    Y = V
-    Z = X*Y**2
-
-    from matplotlib import cm
-    colormap = cm.coolwarm
-    znorm = Z - Z.min()
-    color = colormap(np.array(znorm)/znorm.ptp())
-
-    ipv.figure()
-    ipv.plot_surface(X, Z, Y, color=color[..., :3])
-    # ipv.plot_wireframe(X, Z, Y, color="red")
-    ipv.show()
-    
-def connected_points():
-    node1 = np.array([0.0,0.0,0.0])
-    node2 = np.array([1.0,1.0,1.0])
-    node3 = np.array([0.0,1.0,1.0])
-    node4 = np.array([1.0,0.0,1.0])
-    fig = ipv.figure()
-    scatter = ipv.scatter([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], marker='sphere', size=5)
-    line = ipv.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], color='blue')
-    line = ipv.plot([node1[0], node3[0]], [node1[1], node3[1]], [node1[2], node3[2]], color='blue')
-    line = ipv.plot([node1[0], node4[0]], [node1[1], node4[1]], [node1[2], node4[2]], color='blue')
-    ipv.show()
-
-
-    pass
-def sweep_surface():
-    return
-
-def test():
-    print("hello world")
-    return 2.5
-
-# %% 
-# v = create_circle_vectors(50, 50, 0)
-# v1 = v.copy()
-# for i in range(len(v)):
-#     v1.append(rotate_vector(v[i], [0,1,0], 180))
-#     v1.append(rotate_vector(v[i], [0,1,0], 165))
-#     v1.append(rotate_vector(v[i], [0,1,0], 150))
-#     v1.append(rotate_vector(v[i], [0,1,0], 135))
-#     v1.append(rotate_vector(v[i], [0,1,0], 120))
-#     v1.append(rotate_vector(v[i], [0,1,0], 105))
-#     v1.append(rotate_vector(v[i], [0,1,0], 90))
-#     v1.append(rotate_vector(v[i], [0,1,0], 75))
-#     v1.append(rotate_vector(v[i], [0,1,0], 60))
-#     v1.append(rotate_vector(v[i], [0,1,0], 45))
-#     v1.append(rotate_vector(v[i], [0,1,0], 30))
-#     v1.append(rotate_vector(v[i], [0,1,0], 15))
-#     # v[i] = y_rotation(v[i], math.pi/4)
-# visualise_vectors(v1)
-
-# test_surface2()
-
-# test_animation()
-
-# connected_points()
-
-# %% Nurbs python test
-from geomdl import BSpline, utilities
-def test_controlpoints():
-    # from geomdl.visualization import VisMPL
-    # Create a curve instance
-    crv = BSpline.Curve()
-    # Se t curve degree
-    crv.degree = 3
-    # Set control points
-    crv.ctrlpts = [[10,5,10], [10,20,-30], [40,10,25], [-10,5,0]]
-    # Auto−generate the knot vec tor
-    crv.knotvector = utilities.generate_knot_vector(crv.degree, len(crv.ctrlpts))
-
-    # specify evalutation delta
-    crv.sample_size = 40
-    # Evaluate the curve
-    # crv.evaluate()
-    points = crv.evalpts
-    return points
-    # visualise_vectors(points)
-
-    # Se t the v i s u al i z a t i o n component
-    # crv.vis= VisMPL.VisCurve3D()
-    # # Pl o t the curve
-    # crv.render()
+def example5_controlpoints():
+    cps = [[10,5,10], [10,20,-30], [40,10,25], [-10,5,0]]
+    spline_vectors = get_spline_vectors_from_controlpts(cps, 40)
+    visualise_vectors(spline_vectors)
 # %%
+example5_controlpoints()
