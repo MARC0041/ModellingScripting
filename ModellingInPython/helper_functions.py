@@ -402,5 +402,10 @@ example12_matplotlib_visualise()
 """
 Pytorch implementations
 1. possible use of KNNs to detect features in the mesh
+
+pygem free form deformation from stl
+    https://notebook.community/fsalmoir/PyGeM/tutorials/tutorial-1-stl
+Visualisation in notebooks: 3D Visualization of STL Files with Python & VTK
+    https://levelup.gitconnected.com/3d-visualization-of-stl-files-with-python-vtk-8c1f284c7f6e
 """
 # %%
