@@ -8,6 +8,8 @@ from matplotlib import cm
 # /System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: No module named install
 # export PATH="/Users/marcusc/opt/anaconda3/envs/python311/bin:$PATH"
 
+# Links: used to get spline: https://github.com/orbingol/geomdl-examples/tree/master/surface
+
 def get_circle_vectors(radius = 1, num_points = 50, z_height = 0):
     """
     Returns a list of vectors that form a circle
@@ -187,6 +189,13 @@ def visualise_surface(layers, color = False):
     ipv.squarelim()
     ipv.show()
 
+# to be implemented
+"""
+1. Interpolation
+2. Transition from circle to square
+3. rotate a square in the z axis
+4. import an stl and perform transformations on the object
+"""
 def connected_points():
     node1 = np.array([0.0,0.0,0.0])
     node2 = np.array([1.0,1.0,1.0])
@@ -353,7 +362,22 @@ def example11_sweepsurface():
     # ipv.plot_surface(X, Z, Y)
     # ipv.show()
     return
+def example12_matplotlib_visualise():
+    # Define the theta and z ranges
+    theta = np.linspace(0, 2*np.pi, 10)
+    z = np.linspace(-1, 1, 50)
 
+    # Create the meshgrid
+    Theta, Z = np.meshgrid(theta, z)
+
+    # Define the surface coordinates
+    X = np.cos(Theta)
+    Y = np.sin(Theta)
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    surf = ax.plot_surface(X,Y,Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    plt.show()
+    return
 
 # %%
 # example3_surface()
@@ -362,7 +386,9 @@ def example11_sweepsurface():
 # example8_sweep()
 # example9_sweepsurface()
 # example10_pipe()
-example11_sweepsurface()
+# example11_sweepsurface()
+# example1_circle()
+example12_matplotlib_visualise()
 
 # %%
 
@@ -371,5 +397,10 @@ example11_sweepsurface()
 1. Create surface from vertices
 2. iteration loop optimisation - lattices? 
 3. image operations
+"""
+
+"""
+Pytorch implementations
+1. possible use of KNNs to detect features in the mesh
 """
 # %%
